@@ -24,9 +24,22 @@ export default function ActivityFeed({ entries }) {
               className="activity-icon"
               dangerouslySetInnerHTML={{ __html: type?.icon || "" }}
             />
+            {entry.photo && (
+              <img src={entry.photo} alt="" className="activity-photo" />
+            )}
             <div className="activity-body">
               <span className="activity-label">{type?.label || "Action"}</span>
               {entry.note && <span className="activity-note">{entry.note}</span>}
+              {entry.location && (
+                <a
+                  className="activity-map-link"
+                  href={`https://www.google.com/maps?q=${entry.location.lat},${entry.location.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📍 View on map
+                </a>
+              )}
             </div>
             <span className="activity-time">
               {formatRelativeTime(entry.timestamp)}

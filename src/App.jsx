@@ -33,7 +33,7 @@ export default function App() {
     prevEarnedCount.current = earnedIds.size;
   }, [earnedIds]);
 
-  function handleLog(typeId, note) {
+  function handleLog(typeId, note, extra = {}) {
     setEntries((prev) => [
       ...prev,
       {
@@ -41,6 +41,7 @@ export default function App() {
         typeId,
         note,
         timestamp: new Date().toISOString(),
+        ...extra,
       },
     ]);
   }
