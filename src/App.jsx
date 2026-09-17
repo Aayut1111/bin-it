@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "./components/Header";
 import NavTabs from "./components/NavTabs";
 import LogView from "./components/LogView";
+import DashboardView from "./components/DashboardView";
+import BadgesView from "./components/BadgesView";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { computeStats } from "./utils/streak";
 
 export default function App() {
   const [entries, setEntries] = useLocalStorage("bin-it-entries", []);
   const [activeTab, setActiveTab] = useState("log");
+  const stats = useMemo(() => computeStats(entries), [entries]);
 
   function handleLog(typeId, note) {
     setEntries((prev) => [
@@ -26,9 +30,10 @@ export default function App() {
       <NavTabs active={activeTab} onChange={setActiveTab} />
       <main className="app-main">
         {activeTab === "log" && <LogView onLog={handleLog} />}
-        {activeTab !== "log" && (
-          <p className="empty-state">You're on the "{activeTab}" tab.</p>
+        {activeTab === "dashboard" && (
+          <DashboardView entries={entries} stats={stats} />
         )}
+        {activeTab === "badges" && <BadgesView stats={stats} />}
       </main>
     </div>
   );
