@@ -2,7 +2,7 @@
 
 A civic-action tracker built with React + Vite. Log the small things — picked-up litter, a used dustbin, a reported dumping spot, a kind reminder — and watch a streak and an impact count build over time.
 
-**Live app:** https://<you>.github.io/bin-it/
+**Live app:** https://aayut1111.github.io/bin-it/
 
 ## Features
 
