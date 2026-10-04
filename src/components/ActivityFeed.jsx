@@ -1,13 +1,12 @@
 import { getActionType } from "../data/actionTypes";
 import { formatRelativeTime } from "../utils/format";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function ActivityFeed({ entries }) {
+  const { t, lang } = useLanguage();
+
   if (entries.length === 0) {
-    return (
-      <p className="empty-state">
-        No actions logged yet — head to the Log tab and add your first one.
-      </p>
-    );
+    return <p className="empty-state">{t("dash.empty")}</p>;
   }
 
   const recent = [...entries]
@@ -28,8 +27,13 @@ export default function ActivityFeed({ entries }) {
               <img src={entry.photo} alt="" className="activity-photo" />
             )}
             <div className="activity-body">
-              <span className="activity-label">{type?.label || "Action"}</span>
+              <span className="activity-label">
+                {type ? t(`action.${type.id}.label`) : t("dash.fallbackAction")}
+              </span>
               {entry.note && <span className="activity-note">{entry.note}</span>}
+              {entry.pending && (
+                <span className="activity-pending">⏳ {t("dash.waiting")}</span>
+              )}
               {entry.location && (
                 <a
                   className="activity-map-link"
@@ -37,12 +41,12 @@ export default function ActivityFeed({ entries }) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  📍 View on map
+                  {t("dash.viewMap")}
                 </a>
               )}
             </div>
             <span className="activity-time">
-              {formatRelativeTime(entry.timestamp)}
+              {formatRelativeTime(entry.timestamp, t, lang)}
             </span>
           </li>
         );

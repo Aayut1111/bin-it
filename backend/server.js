@@ -34,27 +34,33 @@ app.get("/api/entries", async (req, res) => {
 
 // Log a new action.
 app.post("/api/entries", async (req, res) => {
-  const { type_id, note, location, photo_url } = req.body || {};
+  const { type_id, note, location, photo_url, created_at } = req.body || {};
 
   if (!type_id) {
     return res.status(400).json({ error: "type_id is required" });
   }
 
+  const row = { type_id, note: note || "", location, photo_url };
+
+  // Actions logged offline are uploaded later; keep the time they really
+  // happened so streaks stay correct. Ignore anything invalid or in the future.
+  const when = Date.parse(created_at);
+  if (!Number.isNaN(when) && when <= Date.now() + 60 * 1000) {
+    row.created_at = new Date(when).toISOString();
+  }
+
   const { data, error } = await supabase
     .from("entries")
-    .insert([{ type_id, note: note || "", location, photo_url }])
+    .insert([row])
     .select()
     .single();
 
-  if (error) return res.status(500).json({ error: error.message });
-  res.status(201).json(data);
-
   if (error) {
-  console.error("Supabase error:", error);
-  return res.status(500).json({ error: error.message });
-}
+    console.error("Supabase error:", error);
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json(data);
 });
 
 const PORT = process.env.PORT || 5050;
-app.listen(PORT, () => console.log(`Bin It backend running on :${PORT}`)); 
-
+app.listen(PORT, () => console.log(`Bin It backend running on :${PORT}`));

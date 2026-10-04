@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { ACTION_TYPES } from "../data/actionTypes";
 import { resizeImage } from "../utils/image";
+import { useLanguage } from "../i18n/LanguageContext";
+import AwarenessCard from "./AwarenessCard";
 
 export default function LogView({ onLog }) {
+  const { t } = useLanguage();
   const [selectedId, setSelectedId] = useState(null);
   const [note, setNote] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -22,10 +25,10 @@ export default function LogView({ onLog }) {
 
   function handlePinLocation() {
     if (!navigator.geolocation) {
-      setLocationStatus("Geolocation isn't supported in this browser.");
+      setLocationStatus(t("log.geoUnsupported"));
       return;
     }
-    setLocationStatus("Getting your location…");
+    setLocationStatus(t("log.geoGetting"));
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocation({
@@ -35,9 +38,7 @@ export default function LogView({ onLog }) {
         setLocationStatus("");
       },
       () => {
-        setLocationStatus(
-          "Couldn't get your location — check this site's location permission."
-        );
+        setLocationStatus(t("log.geoFailed"));
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -50,7 +51,7 @@ export default function LogView({ onLog }) {
       const dataUrl = await resizeImage(file);
       setPhoto(dataUrl);
     } catch {
-      setLocationStatus("Couldn't read that photo — try a different one.");
+      setLocationStatus(t("log.photoFailed"));
     }
   }
 
@@ -65,7 +66,7 @@ export default function LogView({ onLog }) {
     }
 
     onLog(selected.id, note.trim(), extra);
-    setConfirmation(`Logged: ${selected.label}`);
+    setConfirmation(t("log.logged", { label: t(`action.${selected.id}.label`) }));
     setSelectedId(null);
     setNote("");
     setLocation(null);
@@ -76,7 +77,9 @@ export default function LogView({ onLog }) {
 
   return (
     <section className="view log-view">
-      <p className="log-prompt">What did you just do?</p>
+      <AwarenessCard />
+
+      <p className="log-prompt">{t("log.prompt")}</p>
 
       <div className="action-grid">
         {ACTION_TYPES.map((action) => (
@@ -90,7 +93,7 @@ export default function LogView({ onLog }) {
               className="action-icon"
               dangerouslySetInnerHTML={{ __html: action.icon }}
             />
-            <span className="action-label">{action.label}</span>
+            <span className="action-label">{t(`action.${action.id}.label`)}</span>
             <span className="action-points">+{action.points}</span>
           </button>
         ))}
@@ -98,7 +101,9 @@ export default function LogView({ onLog }) {
 
       {selected && (
         <form className="log-form" onSubmit={handleSubmit}>
-          <p className="log-form-description">{selected.description}</p>
+          <p className="log-form-description">
+            {t(`action.${selected.id}.description`)}
+          </p>
 
           {isDumpingSpot && (
             <>
@@ -108,7 +113,7 @@ export default function LogView({ onLog }) {
                   className={`pin-btn${location ? " pinned" : ""}`}
                   onClick={handlePinLocation}
                 >
-                  {location ? "📍 Location pinned" : "📍 Pin My Location"}
+                  {location ? t("log.pinned") : t("log.pin")}
                 </button>
                 {location && (
                   <button
@@ -116,7 +121,7 @@ export default function LogView({ onLog }) {
                     className="photo-remove"
                     onClick={() => setLocation(null)}
                   >
-                    remove
+                    {t("log.remove")}
                   </button>
                 )}
               </div>
@@ -126,7 +131,7 @@ export default function LogView({ onLog }) {
 
               <div className="photo-row">
                 <label className="photo-input-label">
-                  {photo ? "Change Photo" : "📷 Add Photo"}
+                  {photo ? t("log.changePhoto") : t("log.addPhoto")}
                   <input
                     type="file"
                     accept="image/*"
@@ -142,7 +147,7 @@ export default function LogView({ onLog }) {
                       className="photo-remove"
                       onClick={() => setPhoto(null)}
                     >
-                      remove
+                      {t("log.remove")}
                     </button>
                   </>
                 )}
@@ -151,13 +156,13 @@ export default function LogView({ onLog }) {
           )}
 
           <textarea
-            placeholder="Add a note (optional)"
+            placeholder={t("log.notePlaceholder")}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={2}
           />
           <button type="submit" className="log-submit">
-            Log It
+            {t("log.submit")}
           </button>
         </form>
       )}
