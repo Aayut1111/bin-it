@@ -52,6 +52,19 @@ export const ACTION_TYPES = [
       <circle cx="62" cy="42" r="3.5" fill="currentColor" stroke="none"/>
     </svg>`,
   },
+  {
+    id: "ewaste-dropoff",
+    label: "Recycled E-waste",
+    description: "Took old phones, chargers, batteries or gadgets to a proper e-waste collection point.",
+    points: 3,
+    icon: `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="10" width="40" height="62" rx="7"/>
+      <path d="M44 18 L56 18"/>
+      <circle cx="50" cy="62" r="2.5" fill="currentColor" stroke="none"/>
+      <path d="M22 84 Q50 98 78 84"/>
+      <path d="M70 90 L79 84 L72 76"/>
+    </svg>`,
+  },
 ];
 
 export function getActionType(id) {

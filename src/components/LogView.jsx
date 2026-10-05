@@ -3,6 +3,7 @@ import { ACTION_TYPES } from "../data/actionTypes";
 import { resizeImage } from "../utils/image";
 import { useLanguage } from "../i18n/LanguageContext";
 import AwarenessCard from "./AwarenessCard";
+import PhotoPrivacyEditor from "./PhotoPrivacyEditor";
 
 export default function LogView({ onLog }) {
   const { t } = useLanguage();
@@ -12,6 +13,7 @@ export default function LogView({ onLog }) {
   const [location, setLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [photoToReview, setPhotoToReview] = useState(null); // photo waiting for the privacy check
 
   const selected = ACTION_TYPES.find((a) => a.id === selectedId) || null;
   const isDumpingSpot = selected?.id === "reported-spot";
@@ -46,10 +48,11 @@ export default function LogView({ onLog }) {
 
   async function handlePhotoChange(e) {
     const file = e.target.files?.[0];
+    e.target.value = ""; // lets the same photo be picked again after Cancel
     if (!file) return;
     try {
       const dataUrl = await resizeImage(file);
-      setPhoto(dataUrl);
+      setPhotoToReview(dataUrl); // opens the privacy editor first
     } catch {
       setLocationStatus(t("log.photoFailed"));
     }
@@ -168,6 +171,17 @@ export default function LogView({ onLog }) {
       )}
 
       {confirmation && <p className="log-confirmation">{confirmation}</p>}
+
+      {photoToReview && (
+        <PhotoPrivacyEditor
+          src={photoToReview}
+          onCancel={() => setPhotoToReview(null)}
+          onDone={(cleaned) => {
+            setPhoto(cleaned);
+            setPhotoToReview(null);
+          }}
+        />
+      )}
     </section>
   );
 }

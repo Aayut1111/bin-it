@@ -5,6 +5,7 @@ import LogView from "./components/LogView";
 import DashboardView from "./components/DashboardView";
 import BadgesView from "./components/BadgesView";
 import LearnView from "./components/LearnView";
+import MapTab from "./components/MapTab";
 import { fetchEntries, createEntry, isRetryable } from "./api/entries";
 import { computeStats } from "./utils/streak";
 import {
@@ -220,6 +221,7 @@ export default function App() {
             {activeTab === "badges" && (
               <BadgesView stats={stats} onToast={showToast} />
             )}
+            {activeTab === "map" && <MapTab entries={allEntries} onLog={handleLog} />}
             {activeTab === "learn" && <LearnView />}
           </>
         )}

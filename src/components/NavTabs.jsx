@@ -3,6 +3,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 const TABS = [
   { id: "log", key: "nav.log", icon: "📝" },
   { id: "dashboard", key: "nav.dashboard", icon: "📊" },
+  { id: "map", key: "nav.map", icon: "🗺️" },
   { id: "badges", key: "nav.badges", icon: "🏅" },
   { id: "learn", key: "nav.learn", icon: "📖" },
 ];
@@ -21,7 +22,7 @@ export default function NavTabs({ active, onChange }) {
           <span className="nav-icon" aria-hidden="true">
             {tab.icon}
           </span>
-          <span>{t(tab.key)}</span>
+          <span className="nav-label">{t(tab.key)}</span>
         </button>
       ))}
     </nav>
